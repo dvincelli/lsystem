@@ -1,41 +1,39 @@
-#include <unistd.h>
 #include <stdio.h>
 #include <math.h>
-#include "SDL.h"
-#include "SDL_gfxPrimitives.h"
+#include "SDL2/SDL.h"
+#include "turtle.h"
 
-int WINDOW_WIDTH = 640;
-int WINDOW_HEIGHT = 480;
-char* WINDOW_TITLE = "SDL Start";
-
-int oldx;
-int oldy;
+int startx;
+int starty;
 int turtlex;
 int turtley;
 int turtleAngle;
 
-SDL_Surface *screen = NULL;
-/*
+SDL_Renderer *renderer = NULL;
+SDL_Window *win = NULL;
+
+void handle_exit();
+
 void setPoint(int x, int y)
 {
+	startx = x;
+	starty = y;
 }
 
 void drawLine(int x, int y)
 {
-     lineRGBA(screen, 
-               oldx, oldy,
-               turtlex, turtley, 
-               255, 0, 0, 255);
-
-	oldx = turtlex;
-	oldy = turtley;
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 0);
+	SDL_RenderDrawLine(renderer, startx, starty, x, y);
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
+	SDL_RenderPresent(renderer);
+	setPoint(x, y);
+	handle_exit();
 }
 
 void forward(int step)
 {
 	double xstep;
 	double ystep;
-	int oldx, oldy;
 
 	xstep = step * cos((turtleAngle * M_PI)/180);
 	ystep = step * sin((turtleAngle * M_PI)/180);
@@ -58,99 +56,26 @@ void turn(int alpha)
 
 void startTurtle()
 {
+	int posX = 100, posY = 100, width = 1024, height = 768;
+	win = SDL_CreateWindow("Turtle", posX, posY, width, height, 0);
+	renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_RenderClear(renderer);
+
 	turtleAngle = 90;
-	turtlex = 0;
-	turtley = 0;
-	oldx = turtlex;
-	oldy = turtley;
-	setPoint(oldx, oldy);
+	turtlex = 1024/2;
+	turtley = 768/2;
+	setPoint(turtlex, turtley);
 }
-*/
 
-int main(int argc, char **argv)
+void handle_exit()
 {
-   SDL_Init( SDL_INIT_VIDEO );
-
-   screen = SDL_SetVideoMode( WINDOW_WIDTH, WINDOW_HEIGHT, 0, 
-      SDL_HWSURFACE | SDL_DOUBLEBUF );
-   SDL_WM_SetCaption( WINDOW_TITLE, 0 );
-
-   SDL_Event event;
-   int gameRunning = 1;
-
-   while (gameRunning)
-   {
-      if (SDL_PollEvent(&event))
-      {
-         if (event.type == SDL_QUIT)
-         {
-            gameRunning = 0;
-         }
-      }
-
-      SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0, 0, 0));
-
-      pixelRGBA(screen, 
-                10, 15, 
-                255, 255, 255, 255);
-
-      lineRGBA(screen, 
-               20, 10,
-               70, 90, 
-               255, 0, 0, 255);
-
-      trigonRGBA(screen,
-                 500, 50,
-                 550, 200, 
-                 600, 150, 
-                 0, 255, 255, 255);
-
-      filledTrigonRGBA(screen,
-                       200, 200,
-                       300, 50,    
-                       400, 200, 
-                       0, 0, 255, 255);
-
-      rectangleRGBA(screen, 
-                    -10, 300, 
-                    100, 380,
-                    0, 255, 0, 255);
-
-      boxRGBA(screen, 
-              210, 76, 
-              325, 300,
-              255, 0, 0, 150);
-
-      ellipseRGBA(screen,
-                  600, 400,
-                  50, 90,
-                  255, 255, 0, 200);
-
-      filledEllipseRGBA(screen,
-                        600, 400,
-                        25, 150,
-                        0, 255, 0, 255);
-
-      short x[6] = { 350, 275, 300, 325, 350, 400 }; 
-      short y[6] = { 325, 325, 390, 390, 375, 300 };
-
-      polygonRGBA(screen, 
-                  x, y,
-                  6,
-                  255, 255, 255, 155);
-
-      short s[5] = { 400, 450, 450, 425, 300 }; 
-      short t[5] = { 400, 410, 450, 425, 500};
-
-      filledPolygonRGBA(screen, 
-                        s, t,
-                        5,
-                        255, 0, 255, 155);
-
-      SDL_Flip(screen);
-   }
-
-   SDL_Quit();
-
-   return 0;
+	SDL_Event e;
+	if (SDL_PollEvent(&e)) {
+		if (e.type == SDL_QUIT) {
+			SDL_DestroyRenderer(renderer);
+			SDL_DestroyWindow(win);
+			exit(0);
+		}
+	}
 }
+

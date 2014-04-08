@@ -1,8 +1,9 @@
-clean:
-	rm *.o turtle
+CXXFLAGS:=(shell pkg-config --cflags sdl2) $(CXXFLAGS) -lm
+LDLIBS:=$(shell pkg-config --libs sdl2) $(LDLIBS) -lm
 
-turtle.o: turtle.c
-	gcc -Wall -lc -lm `sdl-config --cflags` turtle.c -o turtle
+all: hilbert dragon
 
-turtle: turtle.o
-	ld -dynamic-linker `sdl-config --libs` -lc -lm -lSDL_gfx turtle.o -o turtle
+hilbert: hilbert.o turtle.o
+
+dragon: dragon.o turtle.o
+
