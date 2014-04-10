@@ -1,4 +1,6 @@
 #include "turtle.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 void hilbert(int depth, int side, int direction)
 {
@@ -20,7 +22,7 @@ void hilbert(int depth, int side, int direction)
 	}
 }
 
-int main(int argc, char *argv[]) {
+int main_hilbert(int argc, char *argv[]) {
 
 	if (argc < 4) {
 		printf("Usage:\n");

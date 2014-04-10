@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include "turtle.h"
 
 void dragon(int depth, int side)
@@ -17,12 +17,12 @@ void dragon(int depth, int side)
 	}
 }
 
-int main(int argc, char *argv[]) {
+int main_dragon(int argc, char *argv[]) {
 
 	if (argc < 3) {
 		printf("Usage:\n");
 		printf("%s [depth] [side]\n", argv[0]);
-		return 1;
+		exit(1);
 	}
 
 	startTurtle();
